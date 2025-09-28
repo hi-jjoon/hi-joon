@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리동네 안심지도 - 관악구</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=9f40712b73e24b39e8c1bb1b6ef77703"></script>
+    <style>
+        #map { width: 100%; height: 100%; }
+        .active-filter { background-color: #2563eb; color: white; font-weight: bold; }
+        #landing { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease-out; }
+        #app-container { opacity: 0; transition: opacity 0.5s ease-in; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div id="landing">
+        <div class="text-center text-white p-8 max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-pulse">우리 동네의 '투명한 벽'<br>보이지 않으신가요?</h1>
+            <p class="text-lg md:text-xl mb-8">휠체어를 타는 민준 씨에게, 5분 거리의 주민센터는 <br> 30개의 계단 때문에 20분을 돌아가야 하는 먼 곳입니다.<br>우리는 데이터와 기술로, 이 보이지 않는 벽을 허물고자 합니다.</p>
+            <button id="start-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-xl transition-transform transform hover:scale-105">안전한 우리 동네 지도 보기</button>
+        </div>
+    </div>
+<div id="app-container" class="flex h-screen">
+    <!-- 사이드바 -->
+    <aside class="w-64 bg-white p-6 shadow-lg flex flex-col z-10">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">우리동네 안심지도</h1>
+        <h2 class="text-lg font-semibold text-blue-600 mb-6">관악구편</h2>
+        <nav class="space-y-3">
+            <button id="filter-disabled" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인</button>
+            <button id="filter-elderly" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧓 노인</button>
+            <button id="filter-recipient" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🏠 기초생활수급자</button>
+        </nav>
+    </aside>
+
+    <!-- 지도 영역 -->
+    <main class="flex-1">
+        <div id="map"></div>
+    </main>
+</div>
+<script>
+    const disabledLocations = [
+        { name: '관악구수어통역센터', lat: 37.47874735337458, lng: 126.95072102617827 },
+        { name: 'SRC부설의원', lat: 37.49313776582745, lng: 126.92711758611266 },
+        { name: '꽃새암공동생활가정', lat: 37.490504303729864, lng: 126.93040780868967 },
+        { name: '관악밀알주간보호센터', lat: 37.48212486852273, lng: 126.93030534500474 },
+        { name: '나자로의집보호작업장', lat: 37.48135669408237, lng: 126.93411905747963 },
+        { name: '관악구발달장애인평생교육센터', lat: 37.47297933514036, lng: 126.93371943516783 },
+        { name: '꿈터주간보호센터', lat: 37.48061846800673, lng: 126.94402096914375 },
+        { name: '꿈터2주간보호센터', lat: 37.4805283778512, lng: 126.9440436484021 },
+        { name: '실로암시각장애인복지관', lat: 37.48293034121399, lng: 126.94100609214398 },
+        { name: '꽃가람공동생활가정', lat: 37.490154394091924, lng: 126.94144988342343 },
+        { name: '함께사는세상보호작업장', lat: 37.48868120654801, lng: 126.94136905566417 },
+        { name: '관악장애인자립생활주택(관악)', lat: 37.472170489665814, lng: 126.94192175727399 },
+        { name: '한울림장애인자립생활주택', lat: 37.48594276472277, lng: 126.95281937290476 },
+        { name: '관악구장애인종합복지관', lat: 37.477483309860425, lng: 126.96188045116625 }
+    ];
+
+    const elderlyLocations = [
+        { name: '상록수 노인 복지회관', lat: 37.48512, lng: 126.95888 },
+        { name: '꽃새암공동생활가정', lat: 37.47545, lng: 126.92921 }
+    ];
+
+    const recipientLocations = [
+        { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 }
+    ];
+
+    // ⚠️ 장애인 관련 위험구역
+    const dangerZonePathData = [
+        {lat: 37.4760, lng: 126.9420},
+        {lat: 37.4775, lng: 126.9460},
+        {lat: 37.4750, lng: 126.9480},
+        {lat: 37.4735, lng: 126.9440}
+    ];
+
+    let map, currentMarkers = [], currentPolygon = null, currentInfowindow = null, activeFilter = null;
+
+    document.getElementById('start-button').addEventListener('click', () => {
+        const landingPage = document.getElementById('landing');
+        const appContainer = document.getElementById('app-container');
+        landingPage.style.opacity = '0';
+        setTimeout(() => { landingPage.style.display = 'none'; }, 500);
+        appContainer.style.opacity = '1';
+        kakao.maps.load(initializeMap);
+    });
+
+    // 지도 초기화
+    function initializeMap() {
+        const mapContainer = document.getElementById('map');
+        const mapOption = { center: new kakao.maps.LatLng(37.4782, 126.9515), level: 5 };
+        map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 버튼 이벤트 등록
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            const filterType = button.id.replace('filter-', '');
+            button.addEventListener('click', () => handleFilterClick(filterType, button));
+        });
+    }
+
+    // 버튼 클릭 시 동작
+    function handleFilterClick(filterType, button) {
+        if (activeFilter === filterType) {
+            clearAll();
+            button.classList.remove('active-filter');
+            activeFilter = null;
+        } else {
+            clearAll();
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
+            button.classList.add('active-filter');
+
+            if (filterType === 'disabled') showDisabledData();
+            if (filterType === 'elderly') showElderlyData();
+            if (filterType === 'recipient') showRecipientData();
+
+            activeFilter = filterType;
+        }
+    }
+
+    // 🧹 지도 초기화
+    function clearAll() {
+        currentMarkers.forEach(marker => marker.setMap(null));
+        currentMarkers = [];
+        if (currentPolygon) currentPolygon.setMap(null);
+        if (currentInfowindow) currentInfowindow.close();
+    }
+
+    // ♿ 장애인 데이터 표시
+    function showDisabledData() {
+        addMarkers(disabledLocations);
+        drawDangerZone();
+        panToFirst(disabledLocations);
+    }
+
+    // 🧓 독거노인 데이터 표시
+    function showElderlyData() {
+        addMarkers(elderlyLocations);
+        panToFirst(elderlyLocations);
+    }
+
+    // 🏠 기초생활수급자 데이터 표시
+    function showRecipientData() {
+        addMarkers(recipientLocations);
+        panToFirst(recipientLocations);
+    }
+
+    // 📌 공통 함수: 마커 표시
+    function addMarkers(locations) {
+        locations.forEach(loc => {
+            const position = new kakao.maps.LatLng(loc.lat, loc.lng);
+            const marker = new kakao.maps.Marker({ map: map, position: position, title: loc.name });
+            currentMarkers.push(marker);
+
+            const infowindow = new kakao.maps.InfoWindow({
+                content: `<div style="padding:5px;font-size:12px;">${loc.name}</div>`,
+                removable: true
+            });
+
+            kakao.maps.event.addListener(marker, 'click', () => {
+                if (currentInfowindow) currentInfowindow.close();
+                infowindow.open(map, marker);
+                currentInfowindow = infowindow;
+            });
+        });
+    }
+
+    // 📌 장애인 위험구역 표시
+    function drawDangerZone() {
+        const polygonPath = dangerZonePathData.map(p => new kakao.maps.LatLng(p.lat, p.lng));
+        currentPolygon = new kakao.maps.Polygon({
+            path: polygonPath,
+            strokeWeight: 3,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeStyle: 'longdash',
+            fillColor: '#FF0000',
+            fillOpacity: 0.3
+        });
+        currentPolygon.setMap(map);
+    }
+
+    // 📌 지도 이동
+    function panToFirst(locations) {
+        if (locations.length > 0) {
+            map.panTo(new kakao.maps.LatLng(locations[0].lat, locations[0].lng));
+        }
+    }
+</script>
+</body>
+</html>
+
