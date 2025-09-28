@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>우리동네 안심지도 - 관악구</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=9f40712b73e24b39e8c1bb1b6ef77703"></script>
-    <style>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=9f40712b73e24b39e8c1bb1b6ef77703"></script> <style>
         #map { width: 100%; height: 100%; }
         .active-filter { background-color: #2563eb; color: white; font-weight: bold; }
         #landing { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease-out; }
@@ -22,9 +21,7 @@
         </div>
     </div>
 <div id="app-container" class="flex h-screen">
-    <!-- 사이드바 -->
-    <aside class="w-64 bg-white p-6 shadow-lg flex flex-col z-10">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">우리동네 안심지도</h1>
+    <aside id="sidebar" class="w-64 bg-white p-6 shadow-lg flex-col z-10"> <h1 class="text-2xl font-bold text-gray-800 mb-2">우리동네 안심지도</h1>
         <h2 class="text-lg font-semibold text-blue-600 mb-6">관악구편</h2>
         <nav class="space-y-3">
             <button id="filter-disabled" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인</button>
@@ -33,9 +30,10 @@
         </nav>
     </aside>
 
-    <!-- 지도 영역 -->
-    <main class="flex-1">
-        <div id="map"></div>
+    <main class="flex-1 relative"> <div id="map"></div>
+        <button id="menu-toggle" class="hidden absolute bottom-4 left-4 bg-white shadow-md rounded-full px-4 py-2 text-sm font-semibold hover:bg-gray-100 z-20">
+            ≡ 메뉴
+        </button>
     </main>
 </div>
 <script>
@@ -65,7 +63,6 @@
         { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 }
     ];
 
-    // ⚠️ 장애인 관련 위험구역
     const dangerZonePathData = [
         {lat: 37.4760, lng: 126.9420},
         {lat: 37.4775, lng: 126.9460},
@@ -95,6 +92,11 @@
             const filterType = button.id.replace('filter-', '');
             button.addEventListener('click', () => handleFilterClick(filterType, button));
         });
+        
+        // ✅ 메뉴 버튼 이벤트 등록
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            showSidebar();
+        });
     }
 
     // 버튼 클릭 시 동작
@@ -103,6 +105,7 @@
             clearAll();
             button.classList.remove('active-filter');
             activeFilter = null;
+            showSidebar(); // ✅ 필터 해제 시 사이드바 다시 보이기
         } else {
             clearAll();
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
@@ -113,6 +116,7 @@
             if (filterType === 'recipient') showRecipientData();
 
             activeFilter = filterType;
+            hideSidebar(); // ✅ 필터 적용 시 사이드바 숨기기
         }
     }
 
@@ -131,7 +135,7 @@
         panToFirst(disabledLocations);
     }
 
-    // 🧓 독거노인 데이터 표시
+    // 🧓 노인 데이터 표시
     function showElderlyData() {
         addMarkers(elderlyLocations);
         panToFirst(elderlyLocations);
@@ -184,7 +188,18 @@
             map.panTo(new kakao.maps.LatLng(locations[0].lat, locations[0].lng));
         }
     }
+
+    // ✅ 사이드바 숨기기 함수
+    function hideSidebar() {
+        document.getElementById('sidebar').classList.add('hidden');
+        document.getElementById('menu-toggle').classList.remove('hidden');
+    }
+
+    // ✅ 사이드바 보이기 함수
+    function showSidebar() {
+        document.getElementById('sidebar').classList.remove('hidden');
+        document.getElementById('menu-toggle').classList.add('hidden');
+    }
 </script>
 </body>
 </html>
-
