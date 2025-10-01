@@ -42,44 +42,55 @@
     const disabledLocations = [
         { name: '관악구수어통역센터', lat: 37.47874735337458, lng: 126.95072102617827 },
         { name: 'SRC부설의원', lat: 37.49313776582745, lng: 126.92711758611266 },
-        // ... (기타 장애인 시설 데이터) ...
-        // ✅ [3단계 적용] 비안공원 엘리베이터 데이터 추가
-        {
-            name: '비안공원 엘리베이터',
-            lat: 37.4807,
-            lng: 126.9401,
-            imageUrl: 'YOUR_GITHUB_IMAGE_URL/비안공원_37.4807,126.9401.webp'
-        }
+        { name: '꽃새암공동생활가정', lat: 37.490504303729864, lng: 126.93040780868967 },
+        { name: '관악밀알주간보호센터', lat: 37.48212486852273, lng: 126.93030534500474 },
+        { name: '나자로의집보호작업장', lat: 37.48135669408237, lng: 126.93411905747963 },
+        { name: '관악구발달장애인평생교육센터', lat: 37.47297933514036, lng: 126.93371943516783 },
+        { name: '꿈터주간보호센터', lat: 37.48061846800673, lng: 126.94402096914375 },
+        { name: '꿈터2주간보호센터', lat: 37.4805283778512, lng: 126.9440436484021 },
+        { name: '실로암시각장애인복지관', lat: 37.48293034121399, lng: 126.94100609214398 },
+        { name: '꽃가람공동생활가정', lat: 37.490154394091924, lng: 126.94144988342343 },
+        { name: '함께사는세상보호작업장', lat: 37.48868120654801, lng: 126.94136905566417 },
+        { name: '관악장애인자립생활주택(관악)', lat: 37.472170489665814, lng: 126.94192175727399 },
+        { name: '한울림장애인자립생활주택', lat: 37.48594276472277, lng: 126.95281937290476 },
+        { name: '관악구장애인종합복지관', lat: 37.477483309860425, lng: 126.96188045116625 }
     ];
 
     const elderlyLocations = [
         { name: '상록수 노인 복지회관', lat: 37.48512, lng: 126.95888 },
-        // ... (기타 노인 시설 데이터) ...
-        // ✅ [3단계 적용] 구립 노인종합복지타운 데이터 추가
-        {
-            name: '구립 노인종합복지타운 (예정)',
-            lat: 37.4663,
-            lng: 126.9307,
-            imageUrl: 'YOUR_GITHUB_IMAGE_URL/구립 노인종합복지타운_37.4663, 126.9307.jpg'
-        }
+        { name: '꽃새암공동생활가정', lat: 37.47545, lng: 126.92921 },
+        { name: '성가정 노인교실', lat: 37.47733752126882, lng: 126.95131831944599 },
+        { name: '봉일실버대학', lat: 37.4796550628107, lng: 126.94546318931391},
+        { name: '중앙사회복지관(무료급식소)', lat: 37.48436852631283, lng:  126.94809985548268},
+        { name: '선한이웃교회', lat: 37.48417126200554, lng:  126.93220294853916},
+        { name: '하상시니어아카데미', lat: 37.48701565645684, lng: 126.93127037718203 },
+        { name: '인애 노인교실', lat: 37.48244167825915, lng: 126.92531614017419 },
+        { name: '관악시조 노인교실', lat: 37.472160970861424, lng: 126.91822415250788 },
+        { name: '성림 노인교실', lat: 37.4834595775772, lng: 126.91815248087026 },
+        { name: '서울실버 노인교실(서울실버대학)', lat: 37.483860124639364, lng: 126.91440675724894 },
+        { name: '관악노인종합복지관', lat: 37.49304276076012, lng: 126.92647312752204 }
     ];
 
     const recipientLocations = [
         { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 },
-        // ... (기타 사회복지시설 데이터) ...
-        // ✅ [3단계 적용] 관악문화복지타운 데이터 추가
-        {
-            name: '관악문화복지타운',
-            lat: 37.4900,
-            lng: 126.9466,
-            imageUrl: 'YOUR_GITHUB_IMAGE_URL/문화복지타운_37.4900, 126.9466.jpg'
-        }
+        { name: '관악희망데이케어센터', lat: 37.483350464951684, lng: 126.94336598339986 },
+        { name: '관악중앙데이케어센터', lat: 37.48304356876195, lng: 126.94702949013138 },
+        { name: '가가호호데이케어센터', lat: 37.486364039113646, lng:  126.93827277470167},
+        { name: '효보살핌데이케어센터', lat: 37.486223683137275, lng: 126.94132009529939 },
+        { name: '대한성공회살림터', lat: 37.48868571439046, lng: 126.94137470576834 },
+        { name: '신림성모성당데이케어센터', lat: 37.48700225300803, lng: 126.93146260846822 },
+        { name: '서울관악봉천지역자활센터', lat: 37.48786545002882, lng: 126.93229854751854 },
+        { name: '하늘빛데이케어센터', lat: 37.4788812908566, lng: 126.94789166736976 },
+        { name: '효드림주야간보호센터', lat: 37.474997601624395, lng: 126.9524305723935 },
+        { name: '관악구청소년상담복지센터', lat: 37.47616135227559, lng: 126.95617473797179 }
     ];
 
+    // ✅ Changed variable name for clarity and updated location name
     const multiculturalLocations = [
         { name: '관악구 가족센터', lat: 37.47824, lng: 126.95156 }
     ];
 
+    // ✅ Added new data for Youth Welfare Institutions
     const youthLocations = [
         { name: '신림종합사회복지관', lat: 37.4700, lng: 126.9400 },
         { name: '관악청년청', lat: 37.4788, lng: 126.9535 }
@@ -132,8 +143,8 @@
             if (filterType === 'disabled') showDisabledData();
             if (filterType === 'elderly') showElderlyData();
             if (filterType === 'recipient') showRecipientData();
-            if (filterType === 'high') showMulticulturalData();
-            if (filterType === 'youth') showYouthData();
+            if (filterType === 'high') showMulticulturalData(); // Changed function call
+            if (filterType === 'youth') showYouthData();       // Added function call
 
             activeFilter = filterType;
             hideSidebar();
@@ -147,30 +158,42 @@
         if (currentInfowindow) currentInfowindow.close();
     }
 
-    function showDisabledData() { addMarkers(disabledLocations); drawDangerZone(); panToFirst(disabledLocations); }
-    function showElderlyData() { addMarkers(elderlyLocations); panToFirst(elderlyLocations); }
-    function showRecipientData() { addMarkers(recipientLocations); panToFirst(recipientLocations); }
-    function showMulticulturalData() { addMarkers(multiculturalLocations); panToFirst(multiculturalLocations); }
-    function showYouthData() { addMarkers(youthLocations); panToFirst(youthLocations); }
+    function showDisabledData() {
+        addMarkers(disabledLocations);
+        drawDangerZone();
+        panToFirst(disabledLocations);
+    }
 
-    // ✅ [3단계 적용] 이미지를 표시하도록 수정된 함수
+    function showElderlyData() {
+        addMarkers(elderlyLocations);
+        panToFirst(elderlyLocations);
+    }
+
+    function showRecipientData() {
+        addMarkers(recipientLocations);
+        panToFirst(recipientLocations);
+    }
+    
+    // ✅ Renamed function for clarity
+    function showMulticulturalData() {
+        addMarkers(multiculturalLocations);
+        panToFirst(multiculturalLocations);
+    }
+
+    // ✅ Added new function to show youth locations
+    function showYouthData() {
+        addMarkers(youthLocations);
+        panToFirst(youthLocations);
+    }
+
     function addMarkers(locations) {
         locations.forEach(loc => {
             const position = new kakao.maps.LatLng(loc.lat, loc.lng);
             const marker = new kakao.maps.Marker({ map: map, position: position, title: loc.name });
             currentMarkers.push(marker);
 
-            let content = `<div style="padding:10px; width:220px; font-size:12px; text-align:center;">` +
-                          `    <div style="font-weight:bold; margin-bottom:8px;">${loc.name}</div>`;
-
-            if (loc.imageUrl) {
-                content += `    <img src="${loc.imageUrl}" style="width:100%; height:auto; border-radius:5px;">`;
-            }
-
-            content += `</div>`;
-
             const infowindow = new kakao.maps.InfoWindow({
-                content: content,
+                content: `<div style="padding:5px;font-size:12px;">${loc.name}</div>`,
                 removable: true
             });
 
@@ -202,8 +225,16 @@
         }
     }
 
-    function hideSidebar() { document.getElementById('sidebar').classList.add('hidden'); document.getElementById('menu-toggle').classList.remove('hidden'); }
-    function showSidebar() { document.getElementById('sidebar').classList.remove('hidden'); document.getElementById('menu-toggle').classList.add('hidden'); }
+    function hideSidebar() {
+        document.getElementById('sidebar').classList.add('hidden');
+        document.getElementById('menu-toggle').classList.remove('hidden');
+    }
+
+    function showSidebar() {
+        document.getElementById('sidebar').classList.remove('hidden');
+        document.getElementById('menu-toggle').classList.add('hidden');
+    }
 </script>
 </body>
 </html>
+
