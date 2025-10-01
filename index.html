@@ -139,7 +139,7 @@
             if (filterType === 'disabled') showDisabledData();
             if (filterType === 'elderly') showElderlyData();
             if (filterType === 'recipient') showRecipientData();
-            if (filterType === 'high') showhighData();
+            if (filterType === 'high') showHighData();
 
             activeFilter = filterType;
             hideSidebar(); // ✅ 필터 적용 시 사이드바 숨기기
@@ -174,7 +174,7 @@
     }
 
     // ↗️ 경사로 데이터 표시
-    function showhighData() {
+    function showhHighData() {
         addMarkers(highLocations);
         panToFirst(highLocations);
     }
@@ -235,6 +235,7 @@
 </script>
 </body>
 </html>
+
 
 
 
