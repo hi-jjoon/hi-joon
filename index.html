@@ -96,24 +96,15 @@
         { name: '관악청년청', lat: 37.4788, lng: 126.9535 }
     ];
 
-    // ✅ dangerzone 좌표
-    const dangerZonePathData = [
-        {lat: 37.4760, lng: 126.9420},
-        {lat: 37.4775, lng: 126.9460},
-        {lat: 37.4750, lng: 126.9480},
-        {lat: 37.4735, lng: 126.9440}
+    // ✅ 항상 표시되는 특별 마커들
+    const specialLocations = [
+        { name: "구립 노인종합복지타운", lat: 37.4663, lng: 126.9307, img: "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EA%B5%AC%EB%A6%BD%20%EB%85%B8%EC%9D%B8%EC%A2%85%ED%95%A9%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4_37.4663%2C%20126.9307.png" },
+        { name: "문화복지타운", lat: 37.4900, lng: 126.9466, img: "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EB%AC%B8%ED%99%94%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4_37.4900%2C%20126.9466.jpg" },
+        { name: "비안공원", lat: 37.4807, lng: 126.9401, img: "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EB%B9%84%EC%95%88%EA%B3%B5%EC%9B%90_37.4807%2C126.9401.webp" },
+        { name: "청룡동 비안어린이 공원", lat: 37.480938741993256, lng: 126.94026993576247, img: "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EC%B2%AD%EB%A3%A1%EB%8F%99%20%EB%B9%84%EC%95%88%EC%96%B4%EB%A6%B0%EC%9D%B4%20%EA%B3%B5%EC%9B%90.png" }
     ];
 
-    // ✅ dangerzone 이미지 (raw 주소)
-    const dangerZoneImages = [
-        "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EA%B4%80%EC%95%85%EB%AC%B8%ED%99%94%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4.png",
-        "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EA%B5%AC%EB%A6%BD%20%EB%85%B8%EC%9D%B8%EC%A2%85%ED%95%A9%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4_37.4663%2C%20126.9307.png",
-        "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EB%AC%B8%ED%99%94%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4_37.4900%2C%20126.9466.jpg",
-        "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EB%B9%84%EC%95%88%EA%B3%B5%EC%9B%90_37.4807%2C126.9401.webp",
-        "https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EC%B2%AD%EB%A3%A1%EB%8F%99%20%EB%B9%84%EC%95%88%EC%96%B4%EB%A6%B0%EC%9D%B4%20%EA%B3%B5%EC%9B%90.png"
-    ];
-
-    let map, currentMarkers = [], currentPolygon = null, currentInfowindow = null, activeFilter = null;
+    let map, currentMarkers = [], currentInfowindow = null, activeFilter = null;
 
     document.getElementById('start-button').addEventListener('click', () => {
         const landingPage = document.getElementById('landing');
@@ -129,17 +120,18 @@
         const mapOption = { center: new kakao.maps.LatLng(37.4782, 126.9515), level: 5 };
         map = new kakao.maps.Map(mapContainer, mapOption);
 
+        // 필터 버튼 이벤트
         document.querySelectorAll('.filter-btn').forEach(button => {
             const filterType = button.id.replace('filter-', '');
             button.addEventListener('click', () => handleFilterClick(filterType, button));
         });
-        
+
         document.getElementById('menu-toggle').addEventListener('click', () => {
             showSidebar();
         });
-        
-        // dangerzone은 항상 그림
-        drawDangerZone();
+
+        // ✅ 항상 표시되는 특별 마커 추가
+        showSpecialMarkers();
     }
 
     function handleFilterClick(filterType, button) {
@@ -218,34 +210,26 @@
         });
     }
 
-    // ✅ danger zone 표시 및 클릭 시 이미지 팝업
-    function drawDangerZone() {
-        const polygonPath = dangerZonePathData.map(p => new kakao.maps.LatLng(p.lat, p.lng));
-        currentPolygon = new kakao.maps.Polygon({
-            path: polygonPath,
-            strokeWeight: 3,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeStyle: 'longdash',
-            fillColor: '#FF0000',
-            fillOpacity: 0.3
-        });
-        currentPolygon.setMap(map);
+    // ✅ 항상 표시되는 특별 마커들 (이미지 팝업)
+    function showSpecialMarkers() {
+        specialLocations.forEach(loc => {
+            const position = new kakao.maps.LatLng(loc.lat, loc.lng);
+            const marker = new kakao.maps.Marker({ map: map, position: position, title: loc.name });
 
-        kakao.maps.event.addListener(currentPolygon, 'click', function(mouseEvent) {
-            const randomImage = dangerZoneImages[Math.floor(Math.random() * dangerZoneImages.length)];
             const infowindow = new kakao.maps.InfoWindow({
-                position: mouseEvent.latLng,
                 content: `
                     <div style="padding:5px; text-align:center;">
-                        <img src="${randomImage}" alt="danger zone" style="max-width:200px; height:auto; border-radius:8px;" />
-                        <p style="margin-top:5px; font-size:12px;">위험지역 사진</p>
+                        <img src="${loc.img}" alt="${loc.name}" style="max-width:200px; height:auto; border-radius:8px;" />
+                        <p style="margin-top:5px; font-size:12px;">${loc.name}</p>
                     </div>
                 `
             });
-            if (currentInfowindow) currentInfowindow.close(); 
-            infowindow.open(map);
-            currentInfowindow = infowindow;
+
+            kakao.maps.event.addListener(marker, 'click', () => {
+                if (currentInfowindow) currentInfowindow.close();
+                infowindow.open(map, marker);
+                currentInfowindow = infowindow;
+            });
         });
     }
 
@@ -267,5 +251,6 @@
 </script>
 </body>
 </html>
+
 
 
