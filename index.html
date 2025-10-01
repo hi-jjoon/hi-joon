@@ -27,7 +27,7 @@
             <button id="filter-disabled" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인 복지시설</button>
             <button id="filter-elderly" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧓 노인 복지시설</button>
             <button id="filter-recipient" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🏠 기타 사회복지시설</button>
-            <button id="filter-high" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">↗️ 경사로</button>
+            <button id="filter-high" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">👨‍👩‍👧‍👦 다문화가정 복지센터</button>
         </nav>
     </aside>
 
@@ -59,7 +59,7 @@
         { name: '상록수 노인 복지회관', lat: 37.48512, lng: 126.95888 },
         { name: '꽃새암공동생활가정', lat: 37.47545, lng: 126.92921 },
         { name: '성가정 노인교실', lat: 37.47733752126882, lng: 126.95131831944599 },
-        { name: '봉일실버대학', lat: 37.4796550628107, lng:  26.94546318931391},
+        { name: '봉일실버대학', lat: 37.4796550628107, lng: 126.94546318931391},
         { name: '중앙사회복지관(무료급식소)', lat: 37.48436852631283, lng:  126.94809985548268},
         { name: '선한이웃교회', lat: 37.48417126200554, lng:  126.93220294853916},
         { name: '하상시니어아카데미', lat: 37.48701565645684, lng: 126.93127037718203 },
@@ -84,8 +84,9 @@
         { name: '관악구청소년상담복지센터', lat: 37.47616135227559, lng: 126.95617473797179 }
     ];
 
+    // You can add actual data for Multicultural Family Centers here
     const highLocations = [
-        { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 }
+        { name: '관악구 가족센터', lat: 37.47824, lng: 126.95156 }
     ];
 
     const dangerZonePathData = [
@@ -106,31 +107,27 @@
         kakao.maps.load(initializeMap);
     });
 
-    // 지도 초기화
     function initializeMap() {
         const mapContainer = document.getElementById('map');
         const mapOption = { center: new kakao.maps.LatLng(37.4782, 126.9515), level: 5 };
         map = new kakao.maps.Map(mapContainer, mapOption);
 
-        // 버튼 이벤트 등록
         document.querySelectorAll('.filter-btn').forEach(button => {
             const filterType = button.id.replace('filter-', '');
             button.addEventListener('click', () => handleFilterClick(filterType, button));
         });
         
-        // ✅ 메뉴 버튼 이벤트 등록
         document.getElementById('menu-toggle').addEventListener('click', () => {
             showSidebar();
         });
     }
 
-    // 버튼 클릭 시 동작
     function handleFilterClick(filterType, button) {
         if (activeFilter === filterType) {
             clearAll();
             button.classList.remove('active-filter');
             activeFilter = null;
-            showSidebar(); // ✅ 필터 해제 시 사이드바 다시 보이기
+            showSidebar();
         } else {
             clearAll();
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
@@ -139,14 +136,13 @@
             if (filterType === 'disabled') showDisabledData();
             if (filterType === 'elderly') showElderlyData();
             if (filterType === 'recipient') showRecipientData();
-            if (filterType === 'high') showHighData();
+            if (filterType === 'high') showHighData(); // Call the correctly named function
 
             activeFilter = filterType;
-            hideSidebar(); // ✅ 필터 적용 시 사이드바 숨기기
+            hideSidebar();
         }
     }
 
-    // 🧹 지도 초기화
     function clearAll() {
         currentMarkers.forEach(marker => marker.setMap(null));
         currentMarkers = [];
@@ -154,32 +150,28 @@
         if (currentInfowindow) currentInfowindow.close();
     }
 
-    // ♿ 장애인 데이터 표시
     function showDisabledData() {
         addMarkers(disabledLocations);
         drawDangerZone();
         panToFirst(disabledLocations);
     }
 
-    // 🧓 노인 데이터 표시
     function showElderlyData() {
         addMarkers(elderlyLocations);
         panToFirst(elderlyLocations);
     }
 
-    // 🏠 기초생활수급자 데이터 표시
     function showRecipientData() {
         addMarkers(recipientLocations);
         panToFirst(recipientLocations);
     }
 
-    // ↗️ 경사로 데이터 표시
-    function showhHighData() {
+    // ✅ Corrected function name from 'showhHighData' to 'showHighData'
+    function showHighData() {
         addMarkers(highLocations);
         panToFirst(highLocations);
     }
 
-    // 📌 공통 함수: 마커 표시
     function addMarkers(locations) {
         locations.forEach(loc => {
             const position = new kakao.maps.LatLng(loc.lat, loc.lng);
@@ -199,7 +191,6 @@
         });
     }
 
-    // 📌 장애인 위험구역 표시
     function drawDangerZone() {
         const polygonPath = dangerZonePathData.map(p => new kakao.maps.LatLng(p.lat, p.lng));
         currentPolygon = new kakao.maps.Polygon({
@@ -214,20 +205,17 @@
         currentPolygon.setMap(map);
     }
 
-    // 📌 지도 이동
     function panToFirst(locations) {
         if (locations.length > 0) {
             map.panTo(new kakao.maps.LatLng(locations[0].lat, locations[0].lng));
         }
     }
 
-    // ✅ 사이드바 숨기기 함수
     function hideSidebar() {
         document.getElementById('sidebar').classList.add('hidden');
         document.getElementById('menu-toggle').classList.remove('hidden');
     }
 
-    // ✅ 사이드바 보이기 함수
     function showSidebar() {
         document.getElementById('sidebar').classList.remove('hidden');
         document.getElementById('menu-toggle').classList.add('hidden');
@@ -235,9 +223,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
