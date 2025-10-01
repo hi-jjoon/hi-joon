@@ -27,7 +27,8 @@
             <button id="filter-disabled" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인 복지시설</button>
             <button id="filter-elderly" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧓 노인 복지시설</button>
             <button id="filter-recipient" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🏠 기타 사회복지시설</button>
-            <button id="filter-high" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">👨‍👩‍👧‍👦 다문화가정 복지센터</button>
+            <button id="filter-high" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">👨‍👩‍👧‍👦 다문화가정 복지시설</button>
+            <button id="filter-youth" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧑‍🎓 청년 복지기관</button>
         </nav>
     </aside>
 
@@ -84,9 +85,15 @@
         { name: '관악구청소년상담복지센터', lat: 37.47616135227559, lng: 126.95617473797179 }
     ];
 
-    // You can add actual data for Multicultural Family Centers here
-    const highLocations = [
+    // ✅ Changed variable name for clarity and updated location name
+    const multiculturalLocations = [
         { name: '관악구 가족센터', lat: 37.47824, lng: 126.95156 }
+    ];
+
+    // ✅ Added new data for Youth Welfare Institutions
+    const youthLocations = [
+        { name: '신림종합사회복지관', lat: 37.4700, lng: 126.9400 },
+        { name: '관악청년청', lat: 37.4788, lng: 126.9535 }
     ];
 
     const dangerZonePathData = [
@@ -136,7 +143,8 @@
             if (filterType === 'disabled') showDisabledData();
             if (filterType === 'elderly') showElderlyData();
             if (filterType === 'recipient') showRecipientData();
-            if (filterType === 'high') showHighData(); // Call the correctly named function
+            if (filterType === 'high') showMulticulturalData(); // Changed function call
+            if (filterType === 'youth') showYouthData();       // Added function call
 
             activeFilter = filterType;
             hideSidebar();
@@ -165,11 +173,17 @@
         addMarkers(recipientLocations);
         panToFirst(recipientLocations);
     }
+    
+    // ✅ Renamed function for clarity
+    function showMulticulturalData() {
+        addMarkers(multiculturalLocations);
+        panToFirst(multiculturalLocations);
+    }
 
-    // ✅ Corrected function name from 'showhHighData' to 'showHighData'
-    function showHighData() {
-        addMarkers(highLocations);
-        panToFirst(highLocations);
+    // ✅ Added new function to show youth locations
+    function showYouthData() {
+        addMarkers(youthLocations);
+        panToFirst(youthLocations);
     }
 
     function addMarkers(locations) {
@@ -223,3 +237,4 @@
 </script>
 </body>
 </html>
+
