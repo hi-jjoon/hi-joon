@@ -27,6 +27,7 @@
             <button id="filter-disabled" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인 복지시설</button>
             <button id="filter-elderly" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧓 노인 복지시설</button>
             <button id="filter-recipient" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🏠 기타 사회복지시설</button>
+            <button id="filter-high" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">↗️ 경사로</button>
         </nav>
     </aside>
 
@@ -83,6 +84,10 @@
         { name: '관악구청소년상담복지센터', lat: 37.47616135227559, lng: 126.95617473797179 }
     ];
 
+    const highLocations = [
+        { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 }
+    ];
+
     const dangerZonePathData = [
         {lat: 37.4760, lng: 126.9420},
         {lat: 37.4775, lng: 126.9460},
@@ -134,6 +139,7 @@
             if (filterType === 'disabled') showDisabledData();
             if (filterType === 'elderly') showElderlyData();
             if (filterType === 'recipient') showRecipientData();
+            if (filterType === 'high') showhighData();
 
             activeFilter = filterType;
             hideSidebar(); // ✅ 필터 적용 시 사이드바 숨기기
@@ -165,6 +171,12 @@
     function showRecipientData() {
         addMarkers(recipientLocations);
         panToFirst(recipientLocations);
+    }
+
+    // ↗️ 경사로 데이터 표시
+    function showhighData() {
+        addMarkers(highLocations);
+        panToFirst(highLocations);
     }
 
     // 📌 공통 함수: 마커 표시
@@ -223,6 +235,7 @@
 </script>
 </body>
 </html>
+
 
 
 
