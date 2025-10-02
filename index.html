@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>우리동네 안심지도 - 관악구</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=9f40712b73e24b39e8c1bb1b6ef77703"></script> <style>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_APP_KEY"></script>
+    <style>
+        /* ✅ 브라우저의 기본 여백을 제거하여 화면에 꽉 차게 표시합니다. */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
         #map { width: 100%; height: 100%; }
         .active-filter { background-color: #2563eb; color: white; font-weight: bold; }
         #landing { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease-out; }
@@ -13,196 +21,191 @@
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <div id="landing">
-        <div class="text-center text-white p-8 max-w-2xl">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-pulse">우리 동네의 '투명한 벽'<br>보이지 않으신가요?</h1>
-            <p class="text-lg md:text-xl mb-8">휠체어를 타는 민준 씨에게,<br> 5분 거리의 주민센터는 <br> 30개의 계단 때문에 <br> 20분을 돌아가야 하는 먼 곳입니다.<br>우리는 데이터와 기술로, <br> 이 보이지 않는 벽을 허물고자 합니다.</p>
-            <button id="start-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-xl transition-transform transform hover:scale-105">안전한 우리 동네 지도 보기</button>
-        </div>
-    </div>
+    <div id="landing">
+        <div class="text-center text-white p-8 max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-pulse">우리 동네의 '투명한 벽'<br>보이지 않으신가요?</h1>
+            <p class="text-lg md:text-xl mb-8">휠체어를 타는 민준 씨에게,<br> 5분 거리의 주민센터는 <br> 30개의 계단 때문에 <br> 20분을 돌아가야 하는 먼 곳입니다.<br>우리는 데이터와 기술로, <br> 이 보이지 않는 벽을 허물고자 합니다.</p>
+            <button id="start-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-xl transition-transform transform hover:scale-105">안전한 우리 동네 지도 보기</button>
+        </div>
+    </div>
 <div id="app-container" class="flex h-screen">
-    <aside id="sidebar" class="w-64 bg-white p-6 shadow-lg flex-col z-10"> <h1 class="text-2xl font-bold text-gray-800 mb-2">우리동네 안심지도</h1>
-        <h2 class="text-lg font-semibold text-blue-600 mb-6">관악구편</h2>
-        <nav class="space-y-3">
-            <button id="filter-disabled" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인 복지시설</button>
-            <button id="filter-elderly" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧓 노인 복지시설</button>
-            <button id="filter-recipient" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🏠 기타 사회복지시설</button>
-            <button id="filter-high" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">👨‍👩‍👧‍👦 다문화가정 복지시설</button>
-            <button id="filter-youth" class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧑‍🎓 청년 복지기관</button>
-        </nav>
-    </aside>
+    <aside id="sidebar" class="w-64 bg-white p-6 shadow-lg flex-col z-10"> <h1 class="text-2xl font-bold text-gray-800 mb-2">우리동네 안심지도</h1>
+        <h2 class="text-lg font-semibold text-blue-600 mb-6">관악구편</h2>
+        <nav class="space-y-2">
+            <button id="filter-disabled" class="w-full text-left p-2 rounded-lg hover:bg-gray-200 transition-colors filter-btn">♿ 장애인 복지시설</button>
+            <button id="filter-elderly" class="w-full text-left p-2 rounded-lg hover:bg-gray-200 transition-colors filter-btn">📓 노인 복지시설</button>
+            <button id="filter-recipient" class="w-full text-left p-2 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🏠 기타 사회복지시설</button>
+            <button id="filter-high" class="w-full text-left p-2 rounded-lg hover:bg-gray-200 transition-colors filter-btn">👨‍👩‍👧‍👦 다문화가정 복지시설</button>
+            <button id="filter-youth" class="w-full text-left p-2 rounded-lg hover:bg-gray-200 transition-colors filter-btn">🧑‍🎓 청년 복지기관</button>
+        </nav>
+    </aside>
 
-    <main class="flex-1 relative"> <div id="map"></div>
-        <button id="menu-toggle" class="hidden absolute bottom-4 left-4 bg-white shadow-md rounded-full px-4 py-2 text-sm font-semibold hover:bg-gray-100 z-20">
-            ≡ 메뉴
-        </button>
-    </main>
+    <main class="flex-1 relative"> <div id="map"></div>
+        <button id="menu-toggle" class="hidden absolute bottom-4 left-4 bg-white shadow-md rounded-full px-4 py-2 text-sm font-semibold hover:bg-gray-100 z-20">
+            ≡ 메뉴
+        </button>
+    </main>
 </div>
+
 <script>
-    const disabledLocations = [
-        { name: '관악구수어통역센터', lat: 37.47874735337458, lng: 126.95072102617827 },
-        { name: 'SRC부설의원', lat: 37.49313776582745, lng: 126.92711758611266 },
-        { name: '꽃새암공동생활가정', lat: 37.490504303729864, lng: 126.93040780868967 },
-        { name: '관악밀알주간보호센터', lat: 37.48212486852273, lng: 126.93030534500474 },
-        { name: '나자로의집보호작업장', lat: 37.48135669408237, lng: 126.93411905747963 },
-        { name: '관악구발달장애인평생교육센터', lat: 37.47297933514036, lng: 126.93371943516783 },
-        { name: '꿈터주간보호센터', lat: 37.48061846800673, lng: 126.94402096914375 },
-        { name: '꿈터2주간보호센터', lat: 37.4805283778512, lng: 126.9440436484021 },
-        { name: '실로암시각장애인복지관', lat: 37.48293034121399, lng: 126.94100609214398 },
-        { name: '꽃가람공동생활가정', lat: 37.490154394091924, lng: 126.94144988342343 },
-        { name: '함께사는세상보호작업장', lat: 37.48868120654801, lng: 126.94136905566417 },
-        { name: '관악장애인자립생활주택(관악)', lat: 37.472170489665814, lng: 126.94192175727399 },
-        { name: '한울림장애인자립생활주택', lat: 37.48594276472277, lng: 126.95281937290476 },
-        { name: '관악구장애인종합복지관', lat: 37.477483309860425, lng: 126.96188045116625 }
-    ];
-
-    const elderlyLocations = [
-        { name: '상록수 노인 복지회관', lat: 37.48512, lng: 126.95888 },
-        { name: '꽃새암공동생활가정', lat: 37.47545, lng: 126.92921 },
-        { name: '성가정 노인교실', lat: 37.47733752126882, lng: 126.95131831944599 },
-        { name: '봉일실버대학', lat: 37.4796550628107, lng: 126.94546318931391},
-        { name: '중앙사회복지관(무료급식소)', lat: 37.48436852631283, lng:  126.94809985548268},
-        { name: '선한이웃교회', lat: 37.48417126200554, lng:  126.93220294853916},
-        { name: '하상시니어아카데미', lat: 37.48701565645684, lng: 126.93127037718203 },
-        { name: '인애 노인교실', lat: 37.48244167825915, lng: 126.92531614017419 },
-        { name: '관악시조 노인교실', lat: 37.472160970861424, lng: 126.91822415250788 },
-        { name: '성림 노인교실', lat: 37.4834595775772, lng: 126.91815248087026 },
-        { name: '서울실버 노인교실(서울실버대학)', lat: 37.483860124639364, lng: 126.91440675724894 },
-        { name: '관악노인종합복지관', lat: 37.49304276076012, lng: 126.92647312752204 }
-    ];
-
-    const recipientLocations = [
-        { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 },
-        { name: '관악희망데이케어센터', lat: 37.483350464951684, lng: 126.94336598339986 },
-        { name: '관악중앙데이케어센터', lat: 37.48304356876195, lng: 126.94702949013138 },
-        { name: '가가호호데이케어센터', lat: 37.486364039113646, lng:  126.93827277470167},
-        { name: '효보살핌데이케어센터', lat: 37.486223683137275, lng: 126.94132009529939 },
-        { name: '대한성공회살림터', lat: 37.48868571439046, lng: 126.94137470576834 },
-        { name: '신림성모성당데이케어센터', lat: 37.48700225300803, lng: 126.93146260846822 },
-        { name: '서울관악봉천지역자활센터', lat: 37.48786545002882, lng: 126.93229854751854 },
-        { name: '하늘빛데이케어센터', lat: 37.4788812908566, lng: 126.94789166736976 },
-        { name: '효드림주야간보호센터', lat: 37.474997601624395, lng: 126.9524305723935 },
-        { name: '관악구청소년상담복지센터', lat: 37.47616135227559, lng: 126.95617473797179 }
-    ];
-
-    const multiculturalLocations = [
-        { name: '관악구 가족센터', lat: 37.47824, lng: 126.95156 }
-    ];
-
-    const youthLocations = [
-        { name: '신림종합사회복지관', lat: 37.4700, lng: 126.9400 },
-        { name: '관악청년청', lat: 37.4788, lng: 126.9535 }
-    ];
-
-    // ✅ 추가된 영구 마커 데이터
+    const disabledLocations = [
+        { name: '관악구수어통역센터', lat: 37.47874735337458, lng: 126.95072102617827 },
+        { name: 'SRC부설의원', lat: 37.49313776582745, lng: 126.92711758611266 },
+        { name: '꽃새암공동생활가정', lat: 37.490504303729864, lng: 126.93040780868967 },
+        { name: '관악밀알주간보호센터', lat: 37.48212486852273, lng: 126.93030534500474 },
+        { name: '나자로의집보호작업장', lat: 37.48135669408237, lng: 126.93411905747963 },
+        { name: '관악구발달장애인평생교육센터', lat: 37.47297933514036, lng: 126.93371943516783 },
+        { name: '꿈터주간보호센터', lat: 37.48061846800673, lng: 126.94402096914375 },
+        { name: '꿈터2주간보호센터', lat: 37.4805283778512, lng: 126.9440436484021 },
+        { name: '실로암시각장애인복지관', lat: 37.48293034121399, lng: 126.94100609214398 },
+        { name: '꽃가람공동생활가정', lat: 37.490154394091924, lng: 126.94144988342343 },
+        { name: '함께사는세상보호작업장', lat: 37.48868120654801, lng: 126.94136905566417 },
+        { name: '관악장애인자립생활주택(관악)', lat: 37.472170489665814, lng: 126.94192175727399 },
+        { name: '한울림장애인자립생활주택', lat: 37.48594276472277, lng: 126.95281937290476 },
+        { name: '관악구장애인종합복지관', lat: 37.477483309860425, lng: 126.96188045116625 }
+    ];
+    const elderlyLocations = [
+        { name: '상록수 노인 복지회관', lat: 37.48512, lng: 126.95888 },
+        { name: '꽃새암공동생활가정', lat: 37.47545, lng: 126.92921 },
+        { name: '성가정 노인교실', lat: 37.47733752126882, lng: 126.95131831944599 },
+        { name: '봉일실버대학', lat: 37.4796550628107, lng: 126.94546318931391},
+        { name: '중앙사회복지관(무료급식소)', lat: 37.48436852631283, lng:  126.94809985548268},
+        { name: '선한이웃교회', lat: 37.48417126200554, lng:  126.93220294853916},
+        { name: '하상시니어아카데미', lat: 37.48701565645684, lng: 126.93127037718203 },
+        { name: '인애 노인교실', lat: 37.48244167825915, lng: 126.92531614017419 },
+        { name: '관악시조 노인교실', lat: 37.472160970861424, lng: 126.91822415250788 },
+        { name: '성림 노인교실', lat: 37.4834595775772, lng: 126.91815248087026 },
+        { name: '서울실버 노인교실(서울실버대학)', lat: 37.483860124639364, lng: 126.91440675724894 },
+        { name: '관악노인종합복지관', lat: 37.49304276076012, lng: 126.92647312752204 }
+    ];
+    const recipientLocations = [
+        { name: '관악구청 (주민센터)', lat: 37.47824, lng: 126.95156 },
+        { name: '관악희망데이케어센터', lat: 37.483350464951684, lng: 126.94336598339986 },
+        { name: '관악중앙데이케어센터', lat: 37.48304356876195, lng: 126.94702949013138 },
+        { name: '가가호호데이케어센터', lat: 37.486364039113646, lng:  126.93827277470167},
+        { name: '효보살핌데이케어센터', lat: 37.486223683137275, lng: 126.94132009529939 },
+        { name: '대한성공회살림터', lat: 37.48868571439046, lng: 126.94137470576834 },
+        { name: '신림성모성당데이케어센터', lat: 37.48700225300803, lng: 126.93146260846822 },
+        { name: '서울관악봉천지역자활센터', lat: 37.48786545002882, lng: 126.93229854751854 },
+        { name: '하늘빛데이케어센터', lat: 37.4788812908566, lng: 126.94789166736976 },
+        { name: '효드림주야간보호센터', lat: 37.474997601624395, lng: 126.9524305723935 },
+        { name: '관악구청소년상담복지센터', lat: 37.47616135227559, lng: 126.95617473797179 }
+    ];
+    const multiculturalLocations = [
+        { name: '관악구 가족센터', lat: 37.47824, lng: 126.95156 }
+    ];
+    const youthLocations = [
+        { name: '신림종합사회복지관', lat: 37.4700, lng: 126.9400 },
+        { name: '관악청년청', lat: 37.4788, lng: 126.9535 }
+    ];
     const permanentLocations = [
         { name: '구립 노인종합복지타운', lat: 37.4663, lng: 126.9307, imageUrl: 'https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EA%B5%AC%EB%A6%BD%20%EB%85%B8%EC%9D%B8%EC%A2%85%ED%95%A9%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4_37.4663%2C%20126.9307.png' },
         { name: '문화복지타운', lat: 37.4900, lng: 126.9466, imageUrl: 'https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EB%AC%B8%ED%99%94%EB%B3%B5%EC%A7%80%ED%83%80%EC%9A%B4_37.4900%2C%20126.9466.jpg' },
         { name: '비안공원', lat: 37.4807, lng: 126.9401, imageUrl: 'https://raw.githubusercontent.com/hi-jjoon/hi-joon/main/images/%EB%B9%84%EC%95%88%EA%B3%B5%EC%9B%90_37.4807%2C126.9401.webp' }
     ];
-
-    let map, currentMarkers = [], currentInfowindow = null, activeFilter = null;
-
-    document.getElementById('start-button').addEventListener('click', () => {
-        const landingPage = document.getElementById('landing');
-        const appContainer = document.getElementById('app-container');
-        landingPage.style.opacity = '0';
-        setTimeout(() => { landingPage.style.display = 'none'; }, 500);
-        appContainer.style.opacity = '1';
-        kakao.maps.load(initializeMap);
-    });
-
-    function initializeMap() {
-        const mapContainer = document.getElementById('map');
-        const mapOption = { center: new kakao.maps.LatLng(37.4782, 126.9515), level: 5 };
-        map = new kakao.maps.Map(mapContainer, mapOption);
-
-        // ✅ 영구 마커 추가 함수 호출
+    
+    let map, currentMarkers = [], currentInfowindow = null, activeFilter = null;
+    
+    document.getElementById('start-button').addEventListener('click', () => {
+        const landingPage = document.getElementById('landing');
+        const appContainer = document.getElementById('app-container');
+        landingPage.style.opacity = '0';
+        setTimeout(() => { landingPage.style.display = 'none'; }, 500);
+        appContainer.style.opacity = '1';
+        
+        // 카카오맵 API가 로드된 후 지도를 초기화합니다.
+        kakao.maps.load(initializeMap);
+    });
+    
+    function initializeMap() {
+        const mapContainer = document.getElementById('map');
+        const mapOption = { center: new kakao.maps.LatLng(37.4782, 126.9515), level: 5 };
+        map = new kakao.maps.Map(mapContainer, mapOption);
+        
         addPermanentMarkers();
-
-        document.querySelectorAll('.filter-btn').forEach(button => {
-            const filterType = button.id.replace('filter-', '');
-            button.addEventListener('click', () => handleFilterClick(filterType, button));
-        });
-        
-        document.getElementById('menu-toggle').addEventListener('click', () => {
-            showSidebar();
-        });
-    }
-
-    function handleFilterClick(filterType, button) {
-        if (activeFilter === filterType) {
-            clearAll();
-            button.classList.remove('active-filter');
-            activeFilter = null;
-            showSidebar();
-        } else {
-            clearAll();
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
-            button.classList.add('active-filter');
-
-            if (filterType === 'disabled') showDisabledData();
-            if (filterType === 'elderly') showElderlyData();
-            if (filterType === 'recipient') showRecipientData();
-            if (filterType === 'high') showMulticulturalData();
-            if (filterType === 'youth') showYouthData();
-
-            activeFilter = filterType;
-            hideSidebar();
-        }
-    }
-
-    function clearAll() {
-        currentMarkers.forEach(marker => marker.setMap(null));
-        currentMarkers = [];
-        if (currentInfowindow) currentInfowindow.close();
-    }
-
-    function showDisabledData() {
-        addMarkers(disabledLocations);
-        panToFirst(disabledLocations);
-    }
-
-    function showElderlyData() {
-        addMarkers(elderlyLocations);
-        panToFirst(elderlyLocations);
-    }
-
-    function showRecipientData() {
-        addMarkers(recipientLocations);
-        panToFirst(recipientLocations);
-    }
-    
-    function showMulticulturalData() {
-        addMarkers(multiculturalLocations);
-        panToFirst(multiculturalLocations);
-    }
-
-    function showYouthData() {
-        addMarkers(youthLocations);
-        panToFirst(youthLocations);
-    }
-
-    function addMarkers(locations) {
-        locations.forEach(loc => {
-            const position = new kakao.maps.LatLng(loc.lat, loc.lng);
-            const marker = new kakao.maps.Marker({ map: map, position: position, title: loc.name });
-            currentMarkers.push(marker);
-
-            const infowindow = new kakao.maps.InfoWindow({
-                content: `<div style="padding:5px;font-size:12px;">${loc.name}</div>`,
-                removable: true
-            });
-
-            kakao.maps.event.addListener(marker, 'click', () => {
-                if (currentInfowindow) currentInfowindow.close();
-                infowindow.open(map, marker);
-                currentInfowindow = infowindow;
-            });
-        });
-    }
-
-    // ✅ 영구 마커를 지도에 추가하는 새로운 함수
+        
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            const filterType = button.id.replace('filter-', '');
+            button.addEventListener('click', () => handleFilterClick(filterType, button));
+        });
+        
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            showSidebar();
+        });
+    }
+    
+    function handleFilterClick(filterType, button) {
+        if (activeFilter === filterType) {
+            clearAll();
+            button.classList.remove('active-filter');
+            activeFilter = null;
+            showSidebar();
+        } else {
+            clearAll();
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
+            button.classList.add('active-filter');
+            
+            if (filterType === 'disabled') showDisabledData();
+            if (filterType === 'elderly') showElderlyData();
+            if (filterType === 'recipient') showRecipientData();
+            if (filterType === 'high') showMulticulturalData();
+            if (filterType === 'youth') showYouthData();
+            
+            activeFilter = filterType;
+            hideSidebar();
+        }
+    }
+    
+    function clearAll() {
+        currentMarkers.forEach(marker => marker.setMap(null));
+        currentMarkers = [];
+        if (currentInfowindow) currentInfowindow.close();
+    }
+    
+    function showDisabledData() {
+        addMarkers(disabledLocations);
+        panToFirst(disabledLocations);
+    }
+    
+    function showElderlyData() {
+        addMarkers(elderlyLocations);
+        panToFirst(elderlyLocations);
+    }
+    
+    function showRecipientData() {
+        addMarkers(recipientLocations);
+        panToFirst(recipientLocations);
+    }
+    
+    function showMulticulturalData() {
+        addMarkers(multiculturalLocations);
+        panToFirst(multiculturalLocations);
+    }
+    
+    function showYouthData() {
+        addMarkers(youthLocations);
+        panToFirst(youthLocations);
+    }
+    
+    function addMarkers(locations) {
+        locations.forEach(loc => {
+            const position = new kakao.maps.LatLng(loc.lat, loc.lng);
+            const marker = new kakao.maps.Marker({ map: map, position: position, title: loc.name });
+            currentMarkers.push(marker);
+            
+            const infowindow = new kakao.maps.InfoWindow({
+                content: `<div style="padding:5px;font-size:12px;">${loc.name}</div>`,
+                removable: true
+            });
+            
+            kakao.maps.event.addListener(marker, 'click', () => {
+                if (currentInfowindow) currentInfowindow.close();
+                infowindow.open(map, marker);
+                currentInfowindow = infowindow;
+            });
+        });
+    }
+    
     function addPermanentMarkers() {
         permanentLocations.forEach(loc => {
             const position = new kakao.maps.LatLng(loc.lat, loc.lng);
@@ -211,19 +214,18 @@
                 position: position,
                 title: loc.name
             });
-
-            // 인포윈도우에 표시될 내용 (사진 포함)
+            
             const content = `
                 <div style="padding:10px; width: 280px; text-align: center;">
                     <strong style="font-size: 14px; margin-bottom: 8px; display: block;">${loc.name}</strong>
                     <img src="${loc.imageUrl}" alt="${loc.name}" style="width: 100%; height: auto; border-radius: 5px;">
                 </div>`;
-
+            
             const infowindow = new kakao.maps.InfoWindow({
                 content: content,
                 removable: true
             });
-
+            
             kakao.maps.event.addListener(marker, 'click', () => {
                 if (currentInfowindow) {
                     currentInfowindow.close();
@@ -233,24 +235,22 @@
             });
         });
     }
-
-    function panToFirst(locations) {
-        if (locations.length > 0) {
-            map.panTo(new kakao.maps.LatLng(locations[0].lat, locations[0].lng));
-        }
-    }
-
-    function hideSidebar() {
-        document.getElementById('sidebar').classList.add('hidden');
-        document.getElementById('menu-toggle').classList.remove('hidden');
-    }
-
-    function showSidebar() {
-        document.getElementById('sidebar').classList.remove('hidden');
-        document.getElementById('menu-toggle').classList.add('hidden');
-    }
+    
+    function panToFirst(locations) {
+        if (locations.length > 0) {
+            map.panTo(new kakao.maps.LatLng(locations[0].lat, locations[0].lng));
+        }
+    }
+    
+    function hideSidebar() {
+        document.getElementById('sidebar').classList.add('hidden');
+        document.getElementById('menu-toggle').classList.remove('hidden');
+    }
+    
+    function showSidebar() {
+        document.getElementById('sidebar').classList.remove('hidden');
+        document.getElementById('menu-toggle').classList.add('hidden');
+    }
 </script>
 </body>
 </html>
-
-
